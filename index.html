@@ -155,6 +155,7 @@ button:hover{
 
 <script>
 
+
 // Ambil nomor kencleng dari QR
 const urlParams = new URLSearchParams(window.location.search);
 const idKencleng = urlParams.get('id');
@@ -163,17 +164,43 @@ if(idKencleng){
     document.getElementById('kencleng').value = idKencleng;
 }
 
-// Simulasi submit
-document.getElementById('formKencleng')
-.addEventListener('submit', function(e){
+// URL Apps Script
+const scriptURL = "https://script.google.com/macros/s/AKfycbwlX8v2e0ch_C8I87vSjt-YoN9ftu0goGzFIvVi1E1WhyFA87cuo_mwreTvrl6Rr3LDow/exec";
+
+// Kirim data ke Spreadsheet
+document.getElementById("formKencleng").addEventListener("submit", function(e){
 
     e.preventDefault();
 
-    document.getElementById('pesan').innerHTML =
-    "✅ Aktivasi berhasil. Terima kasih.";
+    const data = {
+        kencleng: document.getElementById("kencleng").value,
+        nama: document.getElementById("nama").value,
+        wa: document.getElementById("wa").value
+    };
+
+    fetch(scriptURL,{
+        method:"POST",
+        body:JSON.stringify(data)
+    })
+    .then(response => response.text())
+    .then(result => {
+
+        document.getElementById("pesan").innerHTML =
+        "✅ Aktivasi berhasil. Terima kasih.";
+
+        document.getElementById("formKencleng").reset();
+
+    })
+    .catch(error => {
+
+        document.getElementById("pesan").innerHTML =
+        "❌ Gagal mengirim data.";
+
+    });
 
 });
 
 </script>
+
 </body>
 </html>
