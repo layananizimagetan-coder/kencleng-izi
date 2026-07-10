@@ -175,30 +175,68 @@ if(idKencleng){
     document.getElementById('kencleng').value = idKencleng;
 }
 
-// Ambil lokasi GPS
- if(navigator.geolocation){
 
-        navigator.geolocation.getCurrentPosition(function(pos){
-
-            document.getElementById("latitude").value =
-                pos.coords.latitude;
-
-            document.getElementById("longitude").value =
-                pos.coords.longitude;
-
-            document.getElementById("alamat").value =
-                pos.coords.latitude + ", " +
-                pos.coords.longitude;
-
-        },function(){
-
-            alert("Lokasi tidak diizinkan");
-    });
-
-}
 // URL Apps Script
 const scriptURL = "https://script.google.com/macros/s/AKfycbw_6eni4lZOUHhDisHWOjjnJsXsHKQ-aL55zVEPmWONPpEhsmiIaD3X9Na7HMkuGghEqg/exec";
 
+async function ambilLokasi(){
+
+    if(!navigator.geolocation){
+        alert("Browser tidak mendukung GPS");
+        return;
+    }
+
+    document.getElementById("alamat").value="Mengambil lokasi...";
+
+    navigator.geolocation.getCurrentPosition(async function(pos){
+
+        const lat=pos.coords.latitude;
+        const lon=pos.coords.longitude;
+
+        document.getElementById("latitude").value=lat;
+        document.getElementById("longitude").value=lon;
+
+        try{
+
+            const url=`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
+
+            const res=await fetch(url);
+
+            const hasil=await res.json();
+
+            const alamat=hasil.address;
+
+            const desa=
+            alamat.village ||
+            alamat.hamlet ||
+            alamat.suburb ||
+            alamat.neighbourhood ||
+            "-";
+
+            const kecamatan=
+            alamat.city_district ||
+            alamat.suburb ||
+            alamat.county ||
+            "-";
+
+            document.getElementById("alamat").value=
+            "Desa "+desa+
+            ", Kec. "+kecamatan;
+
+        }catch(e){
+
+            document.getElementById("alamat").value=
+            "Lokasi berhasil diperoleh";
+
+        }
+
+    },function(){
+
+        alert("Lokasi tidak diizinkan");
+
+    });
+
+}
 // Kirim data ke Spreadsheet
 document.getElementById("formKencleng").addEventListener("submit", function(e){
 
@@ -217,23 +255,6 @@ document.getElementById("formKencleng").addEventListener("submit", function(e){
     browser: navigator.userAgent
 };
     
-    if (navigator.geolocation) {
-
-    navigator.geolocation.getCurrentPosition(function(pos){
-
-        document.getElementById("latitude").value = pos.coords.latitude;
-        document.getElementById("longitude").value = pos.coords.longitude;
-
-        document.getElementById("alamat").value =
-            pos.coords.latitude + ", " + pos.coords.longitude;
-
-    }, function(){
-
-        document.getElementById("alamat").value = "Lokasi tidak diizinkan";
-
-    });
-
-}
 
     fetch(scriptURL,{
         method:"POST",
