@@ -348,21 +348,35 @@ data.forEach(row=>{
 
     }
 
-    html += `
-    <tr>
+let badge = "";
 
-        <td>${row[0]}</td>
+if(row[1]=="Aktif"){
 
-        <td>${row[2] || "-"}</td>
+    badge = '<span class="status-aktif">🟢 Aktif</span>';
 
-        <td>${row[3] || "-"}</td>
+}else{
 
-        <td>${row[4] ? new Date(row[4]).toLocaleDateString('id-ID') : "-"}</td>
+    badge = '<span class="status-belum">🔴 Belum Aktif</span>';
 
-        <td>${row[1]}</td>
+}
 
-    </tr>
-    `;
+html += `
+
+<tr>
+
+<td>${row[0]}</td>
+
+<td>${row[2] || "-"}</td>
+
+<td>${row[3] || "-"}</td>
+
+<td>${row[4] ? new Date(row[4]).toLocaleDateString('id-ID') : "-"}</td>
+
+<td>${badge}</td>
+
+</tr>
+
+`;
 
 });
 
