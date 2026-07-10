@@ -201,10 +201,14 @@ document.getElementById("formKencleng").addEventListener("submit", function(e){
     kencleng: document.getElementById("kencleng").value,
     nama: document.getElementById("nama").value,
     wa: document.getElementById("wa").value,
+
     latitude: document.getElementById("latitude").value,
     longitude: document.getElementById("longitude").value,
-    alamat: document.getElementById("alamat").value
-    };
+    alamat: document.getElementById("alamat").value,
+
+    device: navigator.platform,
+    browser: navigator.userAgent
+};
     
     if (navigator.geolocation) {
 
