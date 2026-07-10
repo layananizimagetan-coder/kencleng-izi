@@ -171,6 +171,24 @@ if(idKencleng){
     document.getElementById('kencleng').value = idKencleng;
 }
 
+// Ambil lokasi GPS
+if (navigator.geolocation) {
+
+    navigator.geolocation.getCurrentPosition(function(pos){
+
+        document.getElementById("latitude").value = pos.coords.latitude;
+        document.getElementById("longitude").value = pos.coords.longitude;
+
+        document.getElementById("alamat").value =
+            pos.coords.latitude + ", " + pos.coords.longitude;
+
+    }, function(){
+
+        document.getElementById("alamat").value = "Lokasi tidak diizinkan";
+
+    });
+
+}
 // URL Apps Script
 const scriptURL = "https://script.google.com/macros/s/AKfycbw_6eni4lZOUHhDisHWOjjnJsXsHKQ-aL55zVEPmWONPpEhsmiIaD3X9Na7HMkuGghEqg/exec";
 
@@ -180,9 +198,12 @@ document.getElementById("formKencleng").addEventListener("submit", function(e){
     e.preventDefault();
 
     const data = {
-        kencleng: document.getElementById("kencleng").value,
-        nama: document.getElementById("nama").value,
-        wa: document.getElementById("wa").value
+    kencleng: document.getElementById("kencleng").value,
+    nama: document.getElementById("nama").value,
+    wa: document.getElementById("wa").value,
+    latitude: document.getElementById("latitude").value,
+    longitude: document.getElementById("longitude").value,
+    alamat: document.getElementById("alamat").value
     };
     
     if (navigator.geolocation) {
