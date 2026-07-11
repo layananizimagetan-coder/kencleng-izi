@@ -266,25 +266,33 @@ const res=await fetch(url);
 
 const json=await res.json();
 
-let desa=
-json.address.village ||
-json.address.hamlet ||
-json.address.suburb ||
+const a = json.address;
+
+const desa =
+a.village ||
+a.hamlet ||
+a.suburb ||
+a.neighbourhood ||
 "-";
 
-let kecamatan=
-json.address.county ||
-json.address.city_district ||
+const kecamatan =
+a.city_district ||
+a.suburb ||
+a.municipality ||
 "-";
 
-let kabupaten=
-json.address.city ||
-json.address.county ||
+const kabupaten =
+a.county ||
+a.city ||
+a.state_district ||
 "-";
 
-document.getElementById("alamat").value=
+const provinsi =
+a.state ||
+"-";
 
-desa+", Kecamatan "+kecamatan+", "+kabupaten;
+document.getElementById("alamat").value = json.display_name;
+`${desa}, Kec. ${kecamatan}, ${kabupaten}, ${provinsi}`;
 
 }
 catch(e){
