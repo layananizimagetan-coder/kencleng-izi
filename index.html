@@ -130,151 +130,295 @@ button:hover{
     <form id="formKencleng">
 
         <label>Nomor Kencleng</label>
-        <input type="text" id="kencleng" readonly>
+
+        <input
+        type="text"
+        id="kencleng"
+        class="readonly"
+        readonly>
 
         <label>Nama Lengkap</label>
-        <input type="text" id="nama" placeholder="Masukkan nama lengkap" required>
+
+        <input
+        type="text"
+        id="nama"
+        placeholder="Masukkan nama lengkap"
+        required>
 
         <label>Nomor WhatsApp</label>
-        <input type="text" id="wa" placeholder="08xxxxxxxxxx" required>
+        
+        <input
+        type="tel"
+        id="wa"
+        placeholder="08xxxxxxxxxx"
+        required>
 
         <label>Lokasi</label>
 
-        <button type="button" onclick="ambilLokasi()">
-            📍 Ambil Lokasi
+        <button
+        type="button"
+        class="btnLokasi"
+        onclick="ambilLokasi()">
+
+        📍 Ambil Lokasi Saya
+
         </button>
-        
-        <input type="text" id="alamat" readonly placeholder="Mengambil lokasi...">
-        
+
+        <input
+        type="text"
+        id="alamat"
+        class="readonly"
+        placeholder="Lokasi belum diambil"
+        readonly>
+
         <input type="hidden" id="latitude">
+
         <input type="hidden" id="longitude">
 
-        <button type="submit">
-            Aktivasi Kencleng
+        <div class="loading" id="loading">
+
+        Mengambil lokasi...
+
+        </div>
+
+        <button
+        type="submit"
+        class="btnAktivasi">
+
+        AKTIVASI KENCLENG
+
         </button>
 
-    </form>
+        </form>
 
-    <div id="pesan"></div>
+        <div id="pesan"></div>
 
-    <div class="footer">
-        UNIT LAYANAN ZAKAT - IZI MAGETAN<br>
-    <small>Memudahkan, Dimudahkan</small>
-    </div>
+        <div class="footer">
 
-</div>
+        <b>UNIT LAYANAN ZAKAT IZI MAGETAN</b>
+
+        <br>
+
+        Memudahkan • Dimudahkan
+
+        </div>
+
+        </div>
 
 <script>
 
+//=============================
+// URL Apps Script
+//=============================
 
-// Ambil nomor kencleng dari QR
-const urlParams = new URLSearchParams(window.location.search);
-const idKencleng = urlParams.get('id');
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw_6eni4lZOUHhDisHWOjjnJsXsHKQ-aL55zVEPmWONPpEhsmiIaD3X9Na7HMkuGghEqg/exec";
 
-if(idKencleng){
-    document.getElementById('kencleng').value = idKencleng;
+
+//=============================
+// Ambil Nomor Kencleng dari QR
+//=============================
+
+const params = new URLSearchParams(window.location.search);
+
+const id = params.get("id");
+
+if(id){
+
+document.getElementById("kencleng").value=id;
+
 }
 
 
-// URL Apps Script
-const scriptURL = "https://script.google.com/macros/s/AKfycbw_6eni4lZOUHhDisHWOjjnJsXsHKQ-aL55zVEPmWONPpEhsmiIaD3X9Na7HMkuGghEqg/exec";
+//=============================
+// Ambil Lokasi GPS
+//=============================
 
 async function ambilLokasi(){
 
-    if(!navigator.geolocation){
-        alert("Browser tidak mendukung GPS");
-        return;
-    }
+if(!navigator.geolocation){
 
-    document.getElementById("alamat").value="Mengambil lokasi...";
+alert("Browser tidak mendukung GPS");
 
-    navigator.geolocation.getCurrentPosition(async function(pos){
-
-        const lat=pos.coords.latitude;
-        const lon=pos.coords.longitude;
-
-        document.getElementById("latitude").value=lat;
-        document.getElementById("longitude").value=lon;
-
-        try{
-
-            const url=`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
-
-            const res=await fetch(url);
-
-            const hasil=await res.json();
-
-            const alamat=hasil.address;
-
-            const desa=
-            alamat.village ||
-            alamat.hamlet ||
-            alamat.suburb ||
-            alamat.neighbourhood ||
-            "-";
-
-            const kecamatan=
-            alamat.city_district ||
-            alamat.suburb ||
-            alamat.county ||
-            "-";
-
-            document.getElementById("alamat").value=
-            "Desa "+desa+
-            ", Kec. "+kecamatan;
-
-        }catch(e){
-
-            document.getElementById("alamat").value=
-            "Lokasi berhasil diperoleh";
-
-        }
-
-    },function(){
-
-        alert("Lokasi tidak diizinkan");
-
-    });
+return;
 
 }
-// Kirim data ke Spreadsheet
-document.getElementById("formKencleng").addEventListener("submit", function(e){
 
-    e.preventDefault();
+document.getElementById("loading").style.display="block";
 
-    const data = {
-    kencleng: document.getElementById("kencleng").value,
-    nama: document.getElementById("nama").value,
-    wa: document.getElementById("wa").value,
+document.getElementById("alamat").value="Mengambil lokasi...";
 
-    latitude: document.getElementById("latitude").value,
-    longitude: document.getElementById("longitude").value,
-    alamat: document.getElementById("alamat").value,
+navigator.geolocation.getCurrentPosition(async function(pos){
 
-    device: navigator.platform,
-    browser: navigator.userAgent
+const lat=pos.coords.latitude;
+
+const lon=pos.coords.longitude;
+
+document.getElementById("latitude").value=lat;
+
+document.getElementById("longitude").value=lon;
+
+try{
+
+const url=
+`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
+
+const res=await fetch(url);
+
+const json=await res.json();
+
+let desa=
+json.address.village ||
+json.address.hamlet ||
+json.address.suburb ||
+"-";
+
+let kecamatan=
+json.address.county ||
+json.address.city_district ||
+"-";
+
+let kabupaten=
+json.address.city ||
+json.address.county ||
+"-";
+
+document.getElementById("alamat").value=
+
+desa+", Kecamatan "+kecamatan+", "+kabupaten;
+
+}
+catch(e){
+
+document.getElementById("alamat").value=
+
+lat+", "+lon;
+
+}
+
+document.getElementById("loading").style.display="none";
+
+},
+function(){
+
+alert("Lokasi tidak diizinkan.");
+
+document.getElementById("loading").style.display="none";
+
+});
+
+}
+
+
+
+//=============================
+// Submit Aktivasi
+//=============================
+
+document.getElementById("formKencleng")
+
+.addEventListener("submit",function(e){
+
+e.preventDefault();
+
+let wa=document.getElementById("wa").value.trim();
+
+if(!wa.startsWith("08")){
+
+alert("Nomor WhatsApp harus diawali 08");
+
+return;
+
+}
+
+const data={
+
+kencleng:document.getElementById("kencleng").value,
+
+nama:document.getElementById("nama").value,
+
+wa:wa,
+
+latitude:document.getElementById("latitude").value,
+
+longitude:document.getElementById("longitude").value,
+
+alamat:document.getElementById("alamat").value,
+
+browser:navigator.userAgent,
+
+device:navigator.platform
+
 };
-    
 
-    fetch(scriptURL,{
-        method:"POST",
-        body:JSON.stringify(data)
-    })
-    .then(response => response.text())
-    .then(result => {
 
-        document.getElementById("pesan").innerHTML =
-        "✅ Aktivasi berhasil. Terima kasih.";
+document.querySelector(".btnAktivasi").disabled=true;
 
-        document.getElementById("formKencleng").reset();
+document.querySelector(".btnAktivasi").innerHTML="Mengirim...";
 
-    })
-    .catch(error => {
 
-        document.getElementById("pesan").innerHTML =
-        "❌ Gagal mengirim data.";
+fetch(SCRIPT_URL,{
 
-    });
+method:"POST",
+
+body:JSON.stringify(data)
+
+})
+
+.then(res=>res.text())
+
+.then(result=>{
+
+if(result=="BERHASIL"){
+
+document.getElementById("pesan").innerHTML=
+
+"✅ Aktivasi berhasil. Terima kasih.";
+
+document.getElementById("pesan").style.color="green";
+
+document.getElementById("formKencleng").reset();
+
+}
+
+else if(result=="SUDAH_AKTIF"){
+
+document.getElementById("pesan").innerHTML=
+
+"⚠️ Kencleng sudah pernah diaktivasi.";
+
+document.getElementById("pesan").style.color="orange";
+
+}
+
+else{
+
+document.getElementById("pesan").innerHTML=
+
+"❌ Nomor Kencleng tidak ditemukan.";
+
+document.getElementById("pesan").style.color="red";
+
+}
+
+document.querySelector(".btnAktivasi").disabled=false;
+
+document.querySelector(".btnAktivasi").innerHTML="AKTIVASI KENCLENG";
+
+})
+
+.catch(()=>{
+
+document.getElementById("pesan").innerHTML=
+
+"❌ Gagal terhubung ke server.";
+
+document.getElementById("pesan").style.color="red";
+
+document.querySelector(".btnAktivasi").disabled=false;
+
+document.querySelector(".btnAktivasi").innerHTML="AKTIVASI KENCLENG";
+
+});
 
 });
 
