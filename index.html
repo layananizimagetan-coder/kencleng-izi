@@ -259,40 +259,15 @@ document.getElementById("longitude").value=lon;
 
 try{
 
-const url=
+const url =
 `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
 
-const res=await fetch(url);
+const res = await fetch(url);
 
-const json=await res.json();
+const json = await res.json();
 
-const a = json.address;
-
-const desa =
-a.village ||
-a.hamlet ||
-a.suburb ||
-a.neighbourhood ||
-"-";
-
-const kecamatan =
-a.city_district ||
-a.suburb ||
-a.municipality ||
-"-";
-
-const kabupaten =
-a.county ||
-a.city ||
-a.state_district ||
-"-";
-
-const provinsi =
-a.state ||
-"-";
-
+// Menampilkan alamat lengkap
 document.getElementById("alamat").value = json.display_name;
-`${desa}, Kec. ${kecamatan}, ${kabupaten}, ${provinsi}`;
 
 }
 catch(e){
