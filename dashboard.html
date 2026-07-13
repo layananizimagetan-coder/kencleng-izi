@@ -364,8 +364,18 @@ fetch(api)
             <td>${row[2] || "-"}</td>
             <td>${row[3] || "-"}</td>
             <td>${row[4] || "-"}</td>
-            <td>${row[9] || "-"}</td>
-            <td>${maps}</td>
+            <td>
+            ${
+            row[9]
+            ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(row[9])}"
+            target="_blank"
+            style="color:#009966;font-weight:bold;text-decoration:none;">
+            ${row[9]}
+            </a>`
+            : "-"
+            }
+            </td>
+            
             <td>${badge}</td>
         </tr>`;
     });
