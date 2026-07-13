@@ -360,23 +360,15 @@ if(row[1]=="Aktif"){
 
 }
 
-html += `
-
+tbody.innerHTML += `
 <tr>
-
 <td>${row[0]}</td>
-
-<td>${row[2] || "-"}</td>
-
-<td>${row[3] || "-"}</td>
-
-<td>${row[4] ? new Date(row[4]).toLocaleDateString('id-ID') : "-"}</td>
-
-<td>${badge}</td>
-
-</tr>
-
-`;
+<td>${row[2]}</td>
+<td>${row[3]}</td>
+<td>${row[4]}</td>
+<td>${row[9] || "-"}</td>
+<td>${status}</td>
+</tr>`;
 
 });
 
