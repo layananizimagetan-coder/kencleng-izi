@@ -131,26 +131,24 @@ overflow:auto;
 }
 
 table{
-
-width:100%;
-border-collapse:collapse;
-
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
 }
 
 th{
-
-background:#009966;
-color:white;
-padding:12px;
-
+    background:#009966;
+    color:#fff;
+    padding:12px;
 }
 
 td{
-
-padding:12px;
-border-bottom:1px solid #eee;
-
+    padding:12px;
+    border-bottom:1px solid #eee;
+    vertical-align:top;
+    word-break:break-word;
 }
+    
 .status-aktif{
     background:#d4edda;
     color:#155724;
@@ -284,14 +282,12 @@ placeholder="🔍 Cari Nomor Kencleng / Nama Donatur">
 <thead>
 
 <tr>
-
-<th>No Kencleng</th>
-<th>Nama</th>
-<th>WhatsApp</th>
-<th>Tanggal</th>
-<th>Alamat</th>
-<th>Status</th>
-
+    <th style="width:120px;">No Kencleng</th>
+    <th style="width:150px;">Nama</th>
+    <th style="width:130px;">WhatsApp</th>
+    <th style="width:110px;">Tanggal</th>
+    <th>Alamat</th>
+    <th style="width:120px;">Status</th>
 </tr>
 
 </thead>
