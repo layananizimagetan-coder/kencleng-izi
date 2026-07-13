@@ -317,66 +317,60 @@ IZI POINT MAGETAN © 2026
 const api="https://script.google.com/macros/s/AKfycbw_6eni4lZOUHhDisHWOjjnJsXsHKQ-aL55zVEPmWONPpEhsmiIaD3X9Na7HMkuGghEqg/exec";
 
 fetch(api)
-.then(res=>res.json())
-.then(data=>{
+.then(res => res.json())
+.then(data => {
 
-document.getElementById("total").innerHTML=data.length;
+    document.getElementById("total").innerHTML = data.length;
 
-let aktif = 0;
-let hariIni = 0;
+    let aktif = 0;
+    let hariIni = 0;
+    let html = "";
 
-const today = new Date().toLocaleDateString('id-ID');
+    const today = new Date().toLocaleDateString("id-ID");
 
-let html = "";
+    data.forEach(row => {
 
-data.forEach(row=>{
+        if(row[1] == "Aktif"){
 
-    if(row[1]=="Aktif"){
+            aktif++;
 
-        aktif++;
+            if(row[4]){
 
-        if(row[4]){
+                let tgl = new Date(row[4]).toLocaleDateString("id-ID");
 
-            let tgl = new Date(row[4]).toLocaleDateString('id-ID');
+                if(tgl == today){
 
-            if(tgl==today){
+                    hariIni++;
 
-                hariIni++;
+                }
 
             }
 
         }
 
-    }
+        let badge =
+        row[1] == "Aktif"
+        ? '<span class="status-aktif">🟢 Aktif</span>'
+        : '<span class="status-belum">🔴 Belum Aktif</span>';
 
-let badge = "";
+        html += `
+        <tr>
+            <td>${row[0]}</td>
+            <td>${row[2] || "-"}</td>
+            <td>${row[3] || "-"}</td>
+            <td>${row[4] || "-"}</td>
+            <td>${row[9] || "-"}</td>
+            <td>${badge}</td>
+        </tr>
+        `;
 
-if(row[1]=="Aktif"){
+    });
 
-    badge = '<span class="status-aktif">🟢 Aktif</span>';
+    document.getElementById("aktif").innerHTML = aktif;
+    document.getElementById("belum").innerHTML = data.length - aktif;
+    document.getElementById("hariini").innerHTML = hariIni;
 
-}else{
-
-    badge = '<span class="status-belum">🔴 Belum Aktif</span>';
-
-}
-
-tbody.innerHTML += `
-<tr>
-<td>${row[0]}</td>
-<td>${row[2]}</td>
-<td>${row[3]}</td>
-<td>${row[4]}</td>
-<td>${row[9] || "-"}</td>
-<td>${status}</td>
-</tr>`;
-
-});
-
-document.getElementById("aktif").innerHTML = aktif;
-document.getElementById("belum").innerHTML = data.length - aktif;
-document.getElementById("hariini").innerHTML = hariIni;
-document.getElementById("tabelData").innerHTML = html;
+    document.getElementById("tabelData").innerHTML = html;
 
 });
 
