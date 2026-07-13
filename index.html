@@ -302,7 +302,7 @@ return new Promise((resolve,reject)=>{
 
 document.getElementById("formKencleng")
 
-.addEventListener("submit",function(e){
+.addEventListener("submit", async function(e){
 
 e.preventDefault();
 
@@ -313,6 +313,20 @@ if(!wa.startsWith("08")){
 alert("Nomor WhatsApp harus diawali 08");
 
 return;
+
+}
+
+// Jika alamat belum ada, ambil lokasi dulu
+if(
+    document.getElementById("alamat").value=="" ||
+    document.getElementById("alamat").value=="Mengambil lokasi..."
+){
+
+    try{
+        await ambilLokasi();
+    }catch(e){
+        return;
+    }
 
 }
 
