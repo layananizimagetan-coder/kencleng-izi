@@ -235,62 +235,65 @@ document.getElementById("kencleng").value=id;
 
 async function ambilLokasi(){
 
-if(!navigator.geolocation){
+return new Promise((resolve,reject)=>{
 
-alert("Browser tidak mendukung GPS");
+    if(!navigator.geolocation){
 
-return;
+        alert("Browser tidak mendukung GPS");
 
-}
+        reject();
 
-document.getElementById("loading").style.display="block";
+        return;
 
-document.getElementById("alamat").value="Mengambil lokasi...";
+    }
 
-navigator.geolocation.getCurrentPosition(async function(pos){
+    document.getElementById("loading").style.display="block";
+    document.getElementById("alamat").value="Mengambil lokasi...";
 
-const lat=pos.coords.latitude;
+    navigator.geolocation.getCurrentPosition(async function(pos){
 
-const lon=pos.coords.longitude;
+        const lat=pos.coords.latitude;
+        const lon=pos.coords.longitude;
 
-document.getElementById("latitude").value=lat;
+        document.getElementById("latitude").value=lat;
+        document.getElementById("longitude").value=lon;
 
-document.getElementById("longitude").value=lon;
+        try{
 
-try{
+            const url=`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
 
-const url =
-`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
+            const res=await fetch(url);
 
-const res = await fetch(url);
+            const json=await res.json();
 
-const json = await res.json();
+            // Alamat lengkap
+            document.getElementById("alamat").value=json.display_name;
 
-// Menampilkan alamat lengkap
-document.getElementById("alamat").value = json.display_name;
+        }catch(e){
 
-}
-catch(e){
+            document.getElementById("alamat").value=lat+", "+lon;
 
-document.getElementById("alamat").value=
+        }
 
-lat+", "+lon;
+        document.getElementById("loading").style.display="none";
 
-}
+        resolve();
 
-document.getElementById("loading").style.display="none";
+    },
 
-},
-function(){
+    function(){
 
-alert("Lokasi tidak diizinkan.");
+        alert("Lokasi tidak diizinkan.");
 
-document.getElementById("loading").style.display="none";
+        document.getElementById("loading").style.display="none";
+
+        reject();
+
+    });
 
 });
 
 }
-
 
 
 //=============================
