@@ -290,6 +290,7 @@ placeholder="🔍 Cari Nomor Kencleng / Nama Donatur">
 <th>WhatsApp</th>
 <th>Tanggal</th>
 <th>Alamat</th>
+<th>Maps</th>
 <th>Status</th>
 
 </tr>
@@ -330,28 +331,32 @@ fetch(api)
 
     data.forEach(row => {
 
-        if(row[1] == "Aktif"){
-
+        if (row[1] == "Aktif") {
             aktif++;
 
-            if(row[4]){
-
+            if (row[4]) {
                 let tgl = new Date(row[4]).toLocaleDateString("id-ID");
-
-                if(tgl == today){
-
-                    hariIni++;
-
-                }
-
+                if (tgl == today) hariIni++;
             }
-
         }
 
-        let badge =
-        row[1] == "Aktif"
-        ? '<span class="status-aktif">🟢 Aktif</span>'
-        : '<span class="status-belum">🔴 Belum Aktif</span>';
+        let badge = row[1] == "Aktif"
+            ? '<span class="status-aktif">🟢 Aktif</span>'
+            : '<span class="status-belum">🔴 Belum Aktif</span>';
+
+        let lat = row[7] || "";
+        let lon = row[8] || "";
+
+        let maps = "-";
+
+        if(lat && lon){
+            maps = `
+            <a href="https://www.google.com/maps?q=${lat},${lon}"
+               target="_blank"
+               style="background:#009966;color:#fff;padding:6px 10px;border-radius:6px;text-decoration:none;">
+               📍 Maps
+            </a>`;
+        }
 
         html += `
         <tr>
@@ -360,10 +365,9 @@ fetch(api)
             <td>${row[3] || "-"}</td>
             <td>${row[4] || "-"}</td>
             <td>${row[9] || "-"}</td>
+            <td>${maps}</td>
             <td>${badge}</td>
-        </tr>
-        `;
-
+        </tr>`;
     });
 
     document.getElementById("aktif").innerHTML = aktif;
@@ -373,7 +377,7 @@ fetch(api)
     document.getElementById("tabelData").innerHTML = html;
 
 });
-
+    
 document.getElementById("cari").addEventListener("keyup",function(){
 
 let filter=this.value.toUpperCase();
