@@ -314,13 +314,13 @@ IZI POINT MAGETAN © 2026
 
 <script>
 
-const api="https://script.google.com/macros/s/AKfycbw_6eni4lZOUHhDisHWOjjnJsXsHKQ-aL55zVEPmWONPpEhsmiIaD3X9Na7HMkuGghEqg/exec";
+const api = "https://script.google.com/macros/s/AKfycbw_6eni4lZOUHhDisHWOjjnJsXsHKQ-aL55zVEPmWONPpEhsmiIaD3X9Na7HMkuGghEqg/exec";
 
 fetch(api)
 .then(res => res.json())
 .then(data => {
 
-    document.getElementById("total").innerHTML = data.length;
+    const tbody = document.getElementById("tabelData");
 
     let aktif = 0;
     let hariIni = 0;
@@ -330,31 +330,50 @@ fetch(api)
 
     data.forEach(row => {
 
-        if (row[1] == "Aktif") {
+        // Status
+        const status = row[1] || "Belum Aktif";
+
+        if(status === "Aktif"){
             aktif++;
 
-            if (row[4]) {
-                let tgl = new Date(row[4]).toLocaleDateString("id-ID");
-                if (tgl == today) hariIni++;
+            if(row[4]){
+                const tgl = new Date(row[4]).toLocaleDateString("id-ID");
+                if(tgl === today){
+                    hariIni++;
+                }
             }
         }
 
-        let badge = row[1] == "Aktif"
-            ? '<span class="status-aktif">🟢 Aktif</span>'
-            : '<span class="status-belum">🔴 Belum Aktif</span>';
+        const badge = status === "Aktif"
+        ? '<span class="status-aktif">🟢 Aktif</span>'
+        : '<span class="status-belum">🔴 Belum Aktif</span>';
 
-        let lat = row[7] || "";
-        let lon = row[8] || "";
+        // Alamat
+        let alamat = "-";
 
-        let maps = "-";
+        if(row[9]){
 
-        if(lat && lon){
-            maps = `
-            <a href="https://www.google.com/maps?q=${lat},${lon}"
+            let tampil = row[9]
+            .replace(", Indonesia","")
+            .replace(", East Java","")
+            .replace(", Java","");
+
+            alamat = `
+            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(row[9])}"
                target="_blank"
-               style="background:#009966;color:#fff;padding:6px 10px;border-radius:6px;text-decoration:none;">
-               📍 Maps
+               style="
+                color:#009966;
+                text-decoration:none;
+                font-weight:bold;">
+                📍 ${tampil}
             </a>`;
+        }
+
+        // Format tanggal
+        let tanggal = "-";
+
+        if(row[4]){
+            tanggal = new Date(row[4]).toLocaleDateString("id-ID");
         }
 
         html += `
@@ -362,48 +381,43 @@ fetch(api)
             <td>${row[0]}</td>
             <td>${row[2] || "-"}</td>
             <td>${row[3] || "-"}</td>
-            <td>${row[4] || "-"}</td>
-            <td>
-            ${
-            row[9]
-            ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(row[9])}"
-            target="_blank"
-            style="color:#009966;font-weight:bold;text-decoration:none;">
-            ${row[9]}
-            </a>`
-            : "-"
-            }
-            </td>
-            
+            <td>${tanggal}</td>
+            <td>${alamat}</td>
             <td>${badge}</td>
         </tr>`;
     });
 
+    tbody.innerHTML = html;
+
+    document.getElementById("total").innerHTML = data.length;
     document.getElementById("aktif").innerHTML = aktif;
     document.getElementById("belum").innerHTML = data.length - aktif;
     document.getElementById("hariini").innerHTML = hariIni;
 
-    document.getElementById("tabelData").innerHTML = html;
-
 });
-    
-document.getElementById("cari").addEventListener("keyup",function(){
 
-let filter=this.value.toUpperCase();
+//=====================
+// SEARCH
+//=====================
 
-let tr=document.querySelectorAll("#tabelData tr");
+document.getElementById("cari").addEventListener("keyup", function(){
 
-tr.forEach(function(row){
+    let filter = this.value.toUpperCase();
 
-let txt=row.innerText.toUpperCase();
+    let tr = document.querySelectorAll("#tabelData tr");
 
-row.style.display=txt.indexOf(filter)>-1?"":"none";
+    tr.forEach(function(row){
 
-});
+        row.style.display =
+        row.innerText.toUpperCase().indexOf(filter) > -1
+        ? ""
+        : "none";
+
+    });
 
 });
 
 </script>
-
+    
 </body>
 </html>
